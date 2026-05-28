@@ -8,17 +8,17 @@ testable scaffold for building agent-driven workflows.
 **Architecture**
 
 ```mermaid
-flowchart LR
-  Browser[Frontend UI (React)] -->|API call| API[FastAPI API Layer]
-  API -->|agent CRUD + workflow calls| Services[Backend Service Layer]
-  Services -->|persist/load| DB[SQLite Persistence]
-  Services -->|manage agents| Agents[Agent Manager]
-  Services -->|execute workflows| Runtime[Runtime Connector]
-  Runtime -->|calls| OpenAI[OpenAI API]
-  Services -->|send messages| Messenger[Messaging Layer]
-  Messenger -->|persist history| DB
-  Messenger -->|optional delivery| Slack[Slack API]
-  Browser -->|fetch history| API
+graph LR
+  Browser[Frontend UI] --> API[FastAPI API Layer]
+  API --> Services[Backend Service Layer]
+  Services --> DB[SQLite Persistence]
+  Services --> Agents[Agent Manager]
+  Services --> Runtime[Runtime Connector]
+  Runtime --> OpenAI[OpenAI API]
+  Services --> Messenger[Messaging Layer]
+  Messenger --> DB
+  Messenger --> Slack[Slack API]
+  Browser --> API
 ```
 
 Why this runtime choice
