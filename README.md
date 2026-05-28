@@ -1,3 +1,90 @@
+# AI Agent Orchestration
+
+This repository contains a minimal AI orchestration demo with clear separation
+between UI (FastAPI), agent runtime integration (connectors), and data/persistence
+(in-memory services for tests). The project's purpose is to provide a safe,
+testable scaffold for building agent-driven workflows.
+
+**Architecture**
+
+```mermaid
+flowchart LR
+  Browser[Frontend UI (React)] -->|HTTP /api/v1| API[FastAPI API Layer]
+  API -->|agent CRUD + workflow calls| Services[Backend Service Layer]
+  Services -->|persist/load| DB[SQLite Persistence]
+  Services -->|manage agents| Agents[Agent Manager]
+  Services -->|execute workflows| Runtime[Runtime Connector]
+  Runtime -->|calls| OpenAI[OpenAI API]
+  Services -->|send messages| Messenger[Messaging Layer]
+  Messenger -->|persist history| DB
+  Messenger -->|optional delivery| Slack[Slack API]
+  Browser -->|fetch history| API
+```
+
+Why this runtime choice
+- The repo ships lightweight, dependency-free scaffolding for runtimes.
+- Use `connectors/autogen` to integrate AutoGen when available; `connectors/openai`
+  demonstrates a small HTTP client. This keeps the core app decoupled from
+  any single orchestration runtime so you can swap or test implementations.
+
+Setup
+1. Create a Python 3.10+ venv and activate it.
+2. Install requirements: `pip install -r backend/requirements.txt`
+3. Install the backend package in editable mode: `pip install -e backend`
+4. Start the app: `python -m uvicorn app.main:app --app-dir backend --reload`
+
+Persistence
+- The backend now uses SQLite by default to persist agents and messages.
+- The default database file is `backend/aiagent.db`.
+- Override the path with `AIAGENT_DB_PATH` in your environment.
+
+Tests
+- Run tests from repository root: `python -m pytest -q`
+- The test suite includes agent creation, workflow execution, message delivery,
+  API integration, and SQLite persistence coverage.
+
+Demo
+- Start the backend from `backend/` and the frontend from `frontend/`.
+- The UI supports creating agents, running workflows, and viewing persisted
+  message history.
+- Use `OPENAI_API_KEY` to enable real agent execution.
+- Use `SLACK_BOT_TOKEN` to enable Slack delivery and run the
+  `slack-broadcast` workflow template.
+- Supported templates:
+  - `two-agent-conversation`
+  - `slack-broadcast`
+
+Running the demo
+1. `cd backend`
+2. `pip install -r requirements.txt`
+3. `pip install -e .`
+4. `set OPENAI_API_KEY=<your-key>`
+5. `set SLACK_BOT_TOKEN=<your-slack-token>` (optional for Slack)
+6. `python -m uvicorn app.main:app --app-dir backend --reload --port 8000`
+7. `cd frontend`
+8. `npm install --legacy-peer-deps`
+9. `npm run dev`
+10. Open the Vite frontend and create agents, run workflows, and inspect history.
+
+CI
+- GitHub Actions is configured in `.github/workflows/python-tests.yml` to
+  install dependencies, install the backend package, and run the test suite.
+
+Adding workflow templates
+- Create new modules under `backend/app/workflows/` and expose a factory
+  function that returns a callable accepting `(agent_manager, messenger,
+  runtime_connector, agent_id, payload)`.
+- This repo ships two built-in templates: `two-agent-conversation` and
+  `slack-broadcast`, which demonstrate asynchronous agent handoff and Slack
+  broadcast workflows.
+
+Adding messaging channels
+- Implement a class that follows the `send_message(channel, text)` interface
+  (see `backend/app/services/messaging.py`). Add a concrete adapter under
+  `connectors/` (for example `connectors/slack/slack_client.py`) and wire it
+  into the services layer via dependency injection in your route or bootstrap.
+- Slack is supported out of the box with `SLACK_BOT_TOKEN`, and channels can
+  be specified as `slack:#general` to send messages through Slack.
 # AI Agent Orchestration — MVP
 
 Monorepo scaffold for an AI agent platform MVP.
@@ -20,6 +107,8 @@ Frontend
 - `cd frontend` then `npm install` and `npm run dev` (Vite)
 
 See `docs/getting_started.md` for more details.
+
+For a runnable end-to-end demo with sample workflows and Slack setup, see `docs/demo.md`.
 
 ## Agent Runtime Integration
 
