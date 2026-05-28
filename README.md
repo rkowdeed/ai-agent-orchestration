@@ -31,7 +31,11 @@ Setup
 1. Create a Python 3.10+ venv and activate it.
 2. Install requirements: `pip install -r backend/requirements.txt`
 3. Install the backend package in editable mode: `pip install -e backend`
-4. Start the app: `python -m uvicorn app.main:app --app-dir backend --reload`
+4. Start the app from the repository root:
+   `python -m uvicorn app.main:app --app-dir backend --reload --port 8000`
+
+If you are already inside the `backend/` folder, use:
+   `python -m uvicorn app.main:app --reload --port 8000`
 
 Persistence
 - The backend now uses SQLite by default to persist agents and messages.

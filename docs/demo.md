@@ -25,6 +25,12 @@ set SLACK_BOT_TOKEN=<your-slack-token>
 python -m uvicorn app.main:app --app-dir backend --reload --port 8000
 ```
 
+If you run this command from inside the `backend/` folder instead, omit `--app-dir backend`:
+
+```bash
+python -m uvicorn app.main:app --reload --port 8000
+```
+
 - `OPENAI_API_KEY` enables actual LLM execution.
 - `SLACK_BOT_TOKEN` enables Slack delivery for the `slack-broadcast` template.
 

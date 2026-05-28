@@ -9,6 +9,11 @@ node_modules/
 dist/
 .build/
 
+# Backend artifacts
+backend/aiagent.db
+backend/app/aiagent_backend.egg-info/
+backend/.venv/
+
 # VSCode
 .vscode/
 
