@@ -9,7 +9,7 @@ testable scaffold for building agent-driven workflows.
 
 ```mermaid
 flowchart LR
-  Browser[Frontend UI (React)] -->|HTTP /api/v1| API[FastAPI API Layer]
+  Browser[Frontend UI (React)] -->|API call| API[FastAPI API Layer]
   API -->|agent CRUD + workflow calls| Services[Backend Service Layer]
   Services -->|persist/load| DB[SQLite Persistence]
   Services -->|manage agents| Agents[Agent Manager]
