@@ -46,6 +46,8 @@ Tests
 - Run tests from repository root: `python -m pytest -q`
 - The test suite includes agent creation, workflow execution, message delivery,
   API integration, and SQLite persistence coverage.
+- Note: `backend/conftest.py` configures pytest to resolve the `connectors`
+  module; this runs automatically during test discovery.
 
 Demo
 - Start the backend from `backend/` and the frontend from `frontend/`.
